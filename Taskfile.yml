@@ -1,0 +1,25 @@
+version: '2'
+
+tasks:
+  default:
+    cmds:
+      - task: run
+
+  run:
+    desc: Build and serve the app
+    cmds:
+      - task: build
+      - task: serve
+
+  build:
+    desc: Build the app
+    cmds:
+      - docker run --rm -v `pwd`/src:/game
+        tinygo/tinygo:0.8.0 /bin/bash -c
+        "tinygo build -o /game/game.wasm /game/main.go; cp /usr/local/tinygo/targets/wasm_exec.js /game/wasm_exec.js"
+
+  serve:
+    desc: Serve the app
+    cmds:
+      - open http://localhost:8080
+      - docker run --rm -p 8080:8043 -v `pwd`/src:/srv/http pierrezemb/gostatic:latest
